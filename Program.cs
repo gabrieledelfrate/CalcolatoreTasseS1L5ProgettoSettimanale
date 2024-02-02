@@ -7,6 +7,7 @@
     internal class Program
     {
         static List<Contribuente> contribuenti = new List<Contribuente>();
+
         static void Main(string[] args)
         {
             bool continua = true;
@@ -55,15 +56,24 @@
                 Console.Write("Data di Nascita (formato: dd/MM/yyyy): ");
 
                 while (!DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dataNascita)
-                || dataNascita.Day > 31 || dataNascita.Month > 12 || dataNascita.Year < 1890)
+                    || dataNascita.Day > 31 || dataNascita.Month > 12 || dataNascita.Year < 1890)
                 {
                     Console.WriteLine("Data non valida. Riprova.");
                     Console.Write("Data di Nascita (formato: dd/MM/yyyy): ");
                 }
 
+                string codiceFiscale;
+                do
+                {
+                    Console.Write("Codice Fiscale: ");
+                    codiceFiscale = Console.ReadLine().ToUpper();
 
-                Console.Write("Codice Fiscale: ");
-                string codiceFiscale = Console.ReadLine().ToUpper();
+                    if (!Contribuente.IsValidCodiceFiscale(codiceFiscale))
+                    {
+                        Console.WriteLine("Il codice fiscale inserito non è corretto. Riprova.");
+                    }
+
+                } while (!Contribuente.IsValidCodiceFiscale(codiceFiscale));
 
                 Console.Write("Sesso (M/F): ");
                 char sesso = char.Parse(Console.ReadLine().ToUpper());
@@ -125,22 +135,16 @@
 
         public Contribuente(string nome, string cognome, DateTime dataNascita, string codiceFiscale, char sesso, string comuneResidenza, decimal redditoAnnuale)
         {
-            {
-                Nome = nome;
-                Cognome = cognome;
-                DataNascita = dataNascita;
-                CodiceFiscale = codiceFiscale;
-                Sesso = sesso;
-                ComuneResidenza = comuneResidenza;
-                RedditoAnnuale = redditoAnnuale;
-            }
-            if (!IsValidCodiceFiscale(codiceFiscale))
-            {
-                throw new ArgumentException("Il formato del codice fiscale è errato.");
-            }
+            Nome = nome;
+            Cognome = cognome;
+            DataNascita = dataNascita;
+            CodiceFiscale = codiceFiscale;
+            Sesso = sesso;
+            ComuneResidenza = comuneResidenza;
+            RedditoAnnuale = redditoAnnuale;
         }
 
-        private bool IsValidCodiceFiscale(string codiceFiscale)
+        public static bool IsValidCodiceFiscale(string codiceFiscale)
         {
             if (codiceFiscale.Length != 16)
             {
